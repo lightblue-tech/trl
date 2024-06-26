@@ -86,6 +86,9 @@ if TRL_USE_RICH:
 
 if __name__ == "__main__":
     parser = TrlParser((SFTScriptArguments, SFTConfig, ModelConfig))
+    parser.add_argument("--dataset_format", type=str, default=None, help="Format of the dataset (e.g. json, parquet, arrow).")
+    parser.add_argument("--train_dataset_path", type=str, default=None, help="Path to the train dataset (if dataset saved as a dataset_format such as parquet, json, arrow).")
+    parser.add_argument("--eval_dataset_path", type=str, default=None, help="Path to the eval dataset (if dataset saved as a dataset_format such as parquet, json, arrow).")
     args, training_args, model_config = parser.parse_args_and_config()
 
     # Force use our print callback
@@ -117,10 +120,23 @@ if __name__ == "__main__":
     ################
     # Dataset
     ################
-    raw_datasets = load_dataset(args.dataset_name)
+    if args.dataset_format is None:
+        raw_datasets = load_dataset(args.dataset_name)
+        train_dataset = raw_datasets[args.dataset_train_split]
+        eval_dataset = raw_datasets[args.dataset_test_split]
+    else:
+        # Support json, parquet etc. loading (https://huggingface.co/docs/datasets/en/loading#parquet)
+        data_files_mapping = {
+            args.dataset_train_split: args.train_dataset_path,
+            args.dataset_test_split: args.eval_dataset_path
+        }
+        raw_datasets = load_dataset(args.dataset_format, data_files=data_files_mapping)
+        train_dataset = raw_datasets[args.dataset_train_split]
+        if args.eval_dataset_path is None:
+            eval_dataset = None
+        else:
+            eval_dataset = raw_datasets[args.dataset_test_split]
 
-    train_dataset = raw_datasets[args.dataset_train_split]
-    eval_dataset = raw_datasets[args.dataset_test_split]
 
     ################
     # Optional rich context managers
