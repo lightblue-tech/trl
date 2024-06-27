@@ -86,9 +86,6 @@ if TRL_USE_RICH:
 
 if __name__ == "__main__":
     parser = TrlParser((SFTScriptArguments, SFTConfig, ModelConfig))
-    parser.add_argument("--dataset_format", type=str, default=None, help="Format of the dataset (e.g. json, parquet, arrow).")
-    parser.add_argument("--train_dataset_path", type=str, default=None, help="Path to the train dataset (if dataset saved as a dataset_format such as parquet, json, arrow).")
-    parser.add_argument("--eval_dataset_path", type=str, default=None, help="Path to the eval dataset (if dataset saved as a dataset_format such as parquet, json, arrow).")
     args, training_args, model_config = parser.parse_args_and_config()
 
     # Force use our print callback
