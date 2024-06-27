@@ -89,6 +89,9 @@ class SFTScriptArguments:
         default=False,
         metadata={"help": "Whether to apply `use_reentrant` for gradient_checkpointing"},
     )
+    dataset_format: str = field(default=None, metadata={"help": "Format of the dataset (e.g. json, parquet, arrow)."})
+    train_dataset_path: str = field(default=None, metadata={"help": "Path to the train dataset (if dataset saved as a dataset_format such as parquet, json, arrow)."})
+    eval_dataset_path: str = field(default=None, metadata={"help": "Path to the eval dataset (if dataset saved as a dataset_format such as parquet, json, arrow)."})
 
 
 @dataclass
